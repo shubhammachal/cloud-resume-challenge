@@ -1,0 +1,153 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  cloud-resume
+
+Globals:
+  Function:
+    Timeout: 3
+    MemorySize: 128
+
+Resources:
+  MyWebsite:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: machal-resume-website
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerPreferred
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+      WebsiteConfiguration: 
+        IndexDocument: index.html
+  
+  MyDistribution:
+    Type: "AWS::CloudFront::Distribution"
+    Properties:
+      DistributionConfig:
+        DefaultCacheBehavior:
+          ViewerProtocolPolicy: redirect-to-https
+          TargetOriginId: machal-resume-website.s3-website-us-east-1.amazonaws.com
+          DefaultTTL: 0
+          MinTTL: 0
+          MaxTTL: 0
+          ForwardedValues:
+            QueryString: false
+        Origins:
+          - DomainName: machal-resume-website.s3-website-us-east-1.amazonaws.com
+            Id: machal-resume-website.s3-website-us-east-1.amazonaws.com
+            CustomOriginConfig:
+              OriginProtocolPolicy: http-only
+        Enabled: true # Changed from "true" to true
+
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref MyWebsite
+      PolicyDocument:
+        Id: MyPolicy
+        Version: "2012-10-17"
+        Statement:
+          - Sid: PublicReadForGetBucketObjects
+            Effect: Allow
+            Principal: "*"
+            Action: "s3:GetObject"
+            Resource: !Join
+              - ""
+              - - "arn:aws:s3:::"
+                - !Ref MyWebsite
+                - /*
+                
+  DynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: cloud-resume-challenge
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: "ID"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "ID"
+          KeyType: "HASH"
+
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: DynamoDBAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:GetItem
+                  - dynamodb:PutItem
+                  - dynamodb:UpdateItem
+                Resource: !GetAtt DynamoDBTable.Arn
+
+  GetFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Role: !GetAtt LambdaRole.Arn  # Added explicit role reference
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref DynamoDBTable  # Fixed reference to DynamoDB table
+      CodeUri: get-function/
+      Handler: app.lambda_handler  # Corrected handler format
+      Runtime: python3.9
+      Architectures:
+        - x86_64
+      Events:
+        GetApi:  # Renamed from HelloWorld for clarity
+          Type: Api
+          Properties:
+            Path: /get
+            Method: get
+
+  PutFunction:
+    Type: AWS::Serverless::Function  # Fixed indentation
+    Properties:
+      Role: !GetAtt LambdaRole.Arn  # Added explicit role reference
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref DynamoDBTable  # Fixed reference and spelling
+      CodeUri: put-function/
+      Handler: app.lambda_handler  # Corrected handler format
+      Runtime: python3.9
+      Architectures:
+        - x86_64
+      Events:
+        PutApi:  # Renamed from HelloWorld for clarity
+          Type: Api
+          Properties:
+            Path: /put
+            Method: get  # Consider changing to 'put' if that's the intended HTTP method
+
+Outputs:
+  GetFunctionApi:
+    Description: "API Gateway endpoint URL for Prod stage for Get function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/get"  # Made dynamic
+
+  PutFunctionApi:
+    Description: "API Gateway endpoint URL for Prod stage for Put function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/put"  # Made dynamic
+
+  GetFunctionArn:
+    Description: "GetFunction Lambda Function ARN"
+    Value: !GetAtt GetFunction.Arn
+
+  PutFunctionArn:
+    Description: "PutFunction Lambda Function ARN"
+    Value: !GetAtt PutFunction.Arn
