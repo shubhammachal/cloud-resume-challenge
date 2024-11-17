@@ -1,0 +1,201 @@
+import json
+import boto3
+import logging
+
+# Set up logging
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+# Initialize DynamoDB client
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table('cloud-resume-challenge')
+
+def lambda_handler(event, context):
+    try:
+        # Log the incoming event for debugging
+        logger.info(f"Received event: {json.dumps(event)}")
+        
+        # Get the current count from DynamoDB
+        response = table.get_item(
+            Key={
+                'ID': 'visitors'
+            }
+        )
+        
+        # If item doesn't exist, initialize with count 1
+        if 'Item' not in response:
+            count = 1
+            table.put_item(
+                Item={
+                    'ID': 'visitors',
+                    'count': count
+                }
+            )
+        else:
+            # Increment the count
+            count = response['Item']['count'] + 1
+            table.update_item(
+                Key={
+                    'ID': 'visitors'
+                },
+                UpdateExpression='SET #count = :val',
+                ExpressionAttributeNames={
+                    '#count': 'count'
+                },
+                ExpressionAttributeValues={
+                    ':val': count
+                }
+            )
+        
+        # Return the successful response with CORS headers
+        return {
+            "statusCode": 200,
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "*",
+                "Access-Control-Allow-Headers": "*",
+                "Content-Type": "application/json"
+            },
+            "body": json.dumps({
+                "count": str(count)
+            })
+        }
+    
+    except Exception as e:
+        # Log the error for debugging
+        logger.error(f"Error: {str(e)}")
+        return {
+            "statusCode": 500,
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "*",
+                "Access-Control-Allow-Headers": "*",
+                "Content-Type": "application/json"
+            },
+            "body": json.dumps({
+                "error": "Internal Server Error",
+                "details": str(e)
+            })
+        }
+    
+#put.py
+import json
+import boto3
+import logging
+
+# Set up logging
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+# Initialize DynamoDB client
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table('cloud-resume-challenge')
+
+def lambda_handler(event, context):
+    try:
+        # Log the incoming event for debugging
+        logger.info(f"Received event: {json.dumps(event)}")
+        
+        # Get the current count from DynamoDB
+        response = table.get_item(
+            Key={
+                'ID': 'visitors'
+            }
+        )
+        
+        # If item doesn't exist, initialize with count 1
+        if 'Item' not in response:
+            count = 1
+            table.put_item(
+                Item={
+                    'ID': 'visitors',
+                    'count': count
+                }
+            )
+        else:
+            # Increment the count
+            count = response['Item']['count'] + 1
+            table.update_item(
+                Key={
+                    'ID': 'visitors'
+                },
+                UpdateExpression='SET #count = :val',
+                ExpressionAttributeNames={
+                    '#count': 'count'
+                },
+                ExpressionAttributeValues={
+                    ':val': count
+                }
+            )
+        
+        # Return the successful response with CORS headers
+        return {
+            "statusCode": 200,
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "*",
+                "Access-Control-Allow-Headers": "*",
+                "Content-Type": "application/json"
+            },
+            "body": json.dumps({
+                "count": str(count)
+            })
+        }
+    
+    except Exception as e:
+        # Log the error for debugging
+        logger.error(f"Error: {str(e)}")
+        return {
+            "statusCode": 500,
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "*",
+                "Access-Control-Allow-Headers": "*",
+                "Content-Type": "application/json"
+            },
+            "body": json.dumps({
+                "error": "Internal Server Error",
+                "details": str(e)
+            })
+        }
+#Js
+(function($) {
+  "use strict"; // Start of use strict
+
+  // Smooth scrolling using jQuery easing
+  $('a.js-scroll-trigger[href*="#"]:not([href="#"])').click(function() {
+    if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname) {
+      var target = $(this.hash);
+      target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
+      if (target.length) {
+        $('html, body').animate({
+          scrollTop: (target.offset().top)
+        }, 1000, "easeInOutExpo");
+        return false;
+      }
+    }
+  });
+
+  // Closes responsive menu when a scroll trigger link is clicked
+  $('.js-scroll-trigger').click(function() {
+    $('.navbar-collapse').collapse('hide');
+  });
+
+  // Activate scrollspy to add active class to navbar items on scroll
+  $('body').scrollspy({
+    target: '#sideNav'
+  });
+
+})(jQuery); // End of use strict
+// Fetch visitor count from the API and update the page
+document.addEventListener('DOMContentLoaded', () => {
+  const countElement = document.getElementById('visitor-count');
+  fetch('https://fbrof3gjqk.execute-api.us-east-1.amazonaws.com/Prod/put')
+        .then(() => fetch('https://fbrof3gjqk.execute-api.us-east-1.amazonaws.com/Prod/get'))
+        .then(response => response.json())
+        .then((data) => {
+            document.getElementById('replaceme').innerText = data.count
+        })
+
+});
+
