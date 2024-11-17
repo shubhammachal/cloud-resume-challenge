@@ -28,12 +28,12 @@ jobs:
           
       - name: test get-function
         run: |
-          cd cloud-resume-challenge/get-function
+          cd cloud-resume/get-function
           python -m pytest -v
           cd ../../
           
       - name: test put-function
         run: |
-          cd cloud-resume-challenge/put-function
+          cd cloud-resume/put-function
           python -m pytest -v
           cd ../../
