@@ -1,0 +1,12 @@
+sequenceDiagram
+    participant Browser as Web Browser
+    participant API as API Gateway
+    participant Lambda as Lambda Function
+    participant DB as DynamoDB
+
+    Browser->>API: HTTP GET request to /put endpoint
+    API->>Lambda: Triggers Lambda function
+    Lambda->>DB: UpdateItem operation
+    DB->>Lambda: Returns updated count
+    Lambda->>API: Returns JSON response
+    API->>Browser: Returns count to display
