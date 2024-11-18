@@ -41,7 +41,7 @@ Resources:
             Id: machal-resume-website.s3-website-us-east-1.amazonaws.com
             CustomOriginConfig:
               OriginProtocolPolicy: http-only
-        Enabled: true # Changed from "true" to true
+        Enabled: true 
 
   BucketPolicy:
     Type: AWS::S3::BucketPolicy
@@ -100,49 +100,49 @@ Resources:
   GetFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Role: !GetAtt LambdaRole.Arn  # Added explicit role reference
+      Role: !GetAtt LambdaRole.Arn  
       Policies:
         - DynamoDBCrudPolicy:
-            TableName: !Ref DynamoDBTable  # Fixed reference to DynamoDB table
+            TableName: !Ref DynamoDBTable  
       CodeUri: get-function/
-      Handler: app.lambda_handler  # Corrected handler format
+      Handler: app.lambda_handler  
       Runtime: python3.9
       Architectures:
         - x86_64
       Events:
-        GetApi:  # Renamed from HelloWorld for clarity
+        GetApi:  
           Type: Api
           Properties:
             Path: /get
             Method: get
 
   PutFunction:
-    Type: AWS::Serverless::Function  # Fixed indentation
+    Type: AWS::Serverless::Function  
     Properties:
-      Role: !GetAtt LambdaRole.Arn  # Added explicit role reference
+      Role: !GetAtt LambdaRole.Arn  
       Policies:
         - DynamoDBCrudPolicy:
-            TableName: !Ref DynamoDBTable  # Fixed reference and spelling
+            TableName: !Ref DynamoDBTable  
       CodeUri: put-function/
-      Handler: app.lambda_handler  # Corrected handler format
+      Handler: app.lambda_handler  
       Runtime: python3.9
       Architectures:
         - x86_64
       Events:
-        PutApi:  # Renamed from HelloWorld for clarity
+        PutApi:  
           Type: Api
           Properties:
             Path: /put
-            Method: post  # Consider changing to 'put' if that's the intended HTTP method
+            Method: post  
 
 Outputs:
   GetFunctionApi:
     Description: "API Gateway endpoint URL for Prod stage for Get function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/get"  # Made dynamic
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/get"  
 
   PutFunctionApi:
     Description: "API Gateway endpoint URL for Prod stage for Put function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/put"  # Made dynamic
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/put"  
 
   GetFunctionArn:
     Description: "GetFunction Lambda Function ARN"
