@@ -133,7 +133,7 @@ Resources:
           Type: Api
           Properties:
             Path: /put
-            Method: get  # Consider changing to 'put' if that's the intended HTTP method
+            Method: post  # Consider changing to 'put' if that's the intended HTTP method
 
 Outputs:
   GetFunctionApi:

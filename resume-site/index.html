@@ -334,25 +334,9 @@
     </div>
     <footer>
       <div>
-        Visitors: <span id="visitor-count">0</span>
+        This page has been viewed: <span id="visitors"></span> times
     </div>
-  
-      <script>
-          // Initialize visitor count from localStorage or set to 0 if not present
-          let visitorCount = parseInt(localStorage.getItem('visitorCount')) || 0;
-          // Increment the count
-          visitorCount++;
-          // Save the updated count to localStorage
-          localStorage.setItem('visitorCount', visitorCount);
-  
-          // Display the count on the page
-          document.addEventListener('DOMContentLoaded', () => {
-              const countElement = document.getElementById('visitor-count');
-              if (countElement) {
-                  countElement.textContent = visitorCount;
-              }
-          });
-      </script>
+    
   </footer>
     <!-- Bootstrap core JavaScript -->
     <script src="vendor/jquery/jquery.min.js"></script>
@@ -362,7 +346,9 @@
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
 
     <!-- Custom scripts for this template -->
-    <script src="js/resume.min.js"></script>
+    <script src="./js/resume.min.js"></script>
+    <script src="./js/resume.js"></script>
+
 
   </body>
 

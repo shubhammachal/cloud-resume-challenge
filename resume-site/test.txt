@@ -1,164 +1,4 @@
-import json
-import boto3
-import logging
-
-# Set up logging
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-
-# Initialize DynamoDB client
-dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('cloud-resume-challenge')
-
-def lambda_handler(event, context):
-    try:
-        # Log the incoming event for debugging
-        logger.info(f"Received event: {json.dumps(event)}")
-        
-        # Get the current count from DynamoDB
-        response = table.get_item(
-            Key={
-                'ID': 'visitors'
-            }
-        )
-        
-        # If item doesn't exist, initialize with count 1
-        if 'Item' not in response:
-            count = 1
-            table.put_item(
-                Item={
-                    'ID': 'visitors',
-                    'count': count
-                }
-            )
-        else:
-            # Increment the count
-            count = response['Item']['count'] + 1
-            table.update_item(
-                Key={
-                    'ID': 'visitors'
-                },
-                UpdateExpression='SET #count = :val',
-                ExpressionAttributeNames={
-                    '#count': 'count'
-                },
-                ExpressionAttributeValues={
-                    ':val': count
-                }
-            )
-        
-        # Return the successful response with CORS headers
-        return {
-            "statusCode": 200,
-            "headers": {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "*",
-                "Access-Control-Allow-Headers": "*",
-                "Content-Type": "application/json"
-            },
-            "body": json.dumps({
-                "count": str(count)
-            })
-        }
-    
-    except Exception as e:
-        # Log the error for debugging
-        logger.error(f"Error: {str(e)}")
-        return {
-            "statusCode": 500,
-            "headers": {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "*",
-                "Access-Control-Allow-Headers": "*",
-                "Content-Type": "application/json"
-            },
-            "body": json.dumps({
-                "error": "Internal Server Error",
-                "details": str(e)
-            })
-        }
-    
-#put.py
-import json
-import boto3
-import logging
-
-# Set up logging
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-
-# Initialize DynamoDB client
-dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('cloud-resume-challenge')
-
-def lambda_handler(event, context):
-    try:
-        # Log the incoming event for debugging
-        logger.info(f"Received event: {json.dumps(event)}")
-        
-        # Get the current count from DynamoDB
-        response = table.get_item(
-            Key={
-                'ID': 'visitors'
-            }
-        )
-        
-        # If item doesn't exist, initialize with count 1
-        if 'Item' not in response:
-            count = 1
-            table.put_item(
-                Item={
-                    'ID': 'visitors',
-                    'count': count
-                }
-            )
-        else:
-            # Increment the count
-            count = response['Item']['count'] + 1
-            table.update_item(
-                Key={
-                    'ID': 'visitors'
-                },
-                UpdateExpression='SET #count = :val',
-                ExpressionAttributeNames={
-                    '#count': 'count'
-                },
-                ExpressionAttributeValues={
-                    ':val': count
-                }
-            )
-        
-        # Return the successful response with CORS headers
-        return {
-            "statusCode": 200,
-            "headers": {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "*",
-                "Access-Control-Allow-Headers": "*",
-                "Content-Type": "application/json"
-            },
-            "body": json.dumps({
-                "count": str(count)
-            })
-        }
-    
-    except Exception as e:
-        # Log the error for debugging
-        logger.error(f"Error: {str(e)}")
-        return {
-            "statusCode": 500,
-            "headers": {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "*",
-                "Access-Control-Allow-Headers": "*",
-                "Content-Type": "application/json"
-            },
-            "body": json.dumps({
-                "error": "Internal Server Error",
-                "details": str(e)
-            })
-        }
-#Js
+#JS 
 (function($) {
   "use strict"; // Start of use strict
 
@@ -186,16 +26,143 @@ def lambda_handler(event, context):
     target: '#sideNav'
   });
 
+  // Visitor counter functionality
+  async function updateVisitorCount() {
+    try {
+      // Replace with your actual API Gateway URL for the put function
+      const putResponse = await fetch('https://fbrof3gjqk.execute-api.us-east-1.amazonaws.com/Prod/put');
+      const putData = await putResponse.json();
+      
+      if (putData.count) {
+        // Update the visitor count on the webpage
+        document.getElementById('visitor-count').textContent = putData.count;
+      }
+    } catch (error) {
+      console.error('Error updating visitor count:', error);
+    }
+  }
+
+  // Call the visitor counter function when the page loads
+  document.addEventListener('DOMContentLoaded', updateVisitorCount);
+
 })(jQuery); // End of use strict
-// Fetch visitor count from the API and update the page
-document.addEventListener('DOMContentLoaded', () => {
-  const countElement = document.getElementById('visitor-count');
-  fetch('https://fbrof3gjqk.execute-api.us-east-1.amazonaws.com/Prod/put')
-        .then(() => fetch('https://fbrof3gjqk.execute-api.us-east-1.amazonaws.com/Prod/get'))
-        .then(response => response.json())
-        .then((data) => {
-            document.getElementById('replaceme').innerText = data.count
-        })
 
-});
+#get
+# get-function/app.py
+import json
+import boto3
+import logging
 
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table('cloud-resume-challenge')
+
+def lambda_handler(event, context):
+    try:
+        logger.info(f"Received event: {json.dumps(event)}")
+        
+        # Get the current count from DynamoDB
+        response = table.get_item(
+            Key={
+                'ID': 'visitors'
+            }
+        )
+        
+        # Get count or default to 0 if not found
+        count = response.get('Item', {}).get('count', 0)
+        
+        return {
+            "statusCode": 200,
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "*",
+                "Access-Control-Allow-Headers": "*",
+                "Content-Type": "application/json"
+            },
+            "body": json.dumps({
+                "count": str(count)
+            })
+        }
+    
+    except Exception as e:
+        logger.error(f"Error: {str(e)}")
+        return {
+            "statusCode": 500,
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "*",
+                "Access-Control-Allow-Headers": "*",
+                "Content-Type": "application/json"
+            },
+            "body": json.dumps({
+                "error": "Internal Server Error",
+                "details": str(e)
+            })
+        }
+
+
+
+#put
+import json
+import boto3
+import logging
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table('cloud-resume-challenge')
+
+def lambda_handler(event, context):
+    try:
+        logger.info(f"Received event: {json.dumps(event)}")
+        
+        # Use atomic counter to increment the count
+        response = table.update_item(
+            Key={
+                'ID': 'visitors'
+            },
+            UpdateExpression='SET #count = if_not_exists(#count, :zero) + :inc',
+            ExpressionAttributeNames={
+                '#count': 'count'
+            },
+            ExpressionAttributeValues={
+                ':inc': 1,
+                ':zero': 0
+            },
+            ReturnValues='UPDATED_NEW'
+        )
+        
+        # Get the new count from the response
+        new_count = response['Attributes']['count']
+        
+        return {
+            "statusCode": 200,
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "*",
+                "Access-Control-Allow-Headers": "*",
+                "Content-Type": "application/json"
+            },
+            "body": json.dumps({
+                "count": str(new_count)
+            })
+        }
+    
+    except Exception as e:
+        logger.error(f"Error: {str(e)}")
+        return {
+            "statusCode": 500,
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "*",
+                "Access-Control-Allow-Headers": "*",
+                "Content-Type": "application/json"
+            },
+            "body": json.dumps({
+                "error": "Internal Server Error",
+                "details": str(e)
+            })
+        }

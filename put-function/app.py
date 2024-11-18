@@ -1,5 +1,6 @@
-import json
 import boto3
+import json
+import os
 import logging
 
 logger = logging.getLogger()
@@ -10,52 +11,40 @@ table = dynamodb.Table('cloud-resume-challenge')
 
 def lambda_handler(event, context):
     try:
-        logger.info(f"Received event: {json.dumps(event)}")
-        
-        # Use atomic counter to increment the count
         response = table.update_item(
-            Key={
-                'ID': 'visitors'
-            },
-            UpdateExpression='SET #count = if_not_exists(#count, :zero) + :inc',
-            ExpressionAttributeNames={
-                '#count': 'count'
-            },
-            ExpressionAttributeValues={
-                ':inc': 1,
-                ':zero': 0
-            },
-            ReturnValues='UPDATED_NEW'
+            Key={'ID': 'visitors'},  # Match 'ID' key exactly as defined
+            UpdateExpression="ADD #count :inc",  # Increment count attribute
+            ExpressionAttributeNames={'#count': 'count'},
+            ExpressionAttributeValues={':inc': 1},
+            ReturnValues="UPDATED_NEW"  # Return updated values
         )
-        
-        # Get the new count from the response
-        new_count = response['Attributes']['count']
-        
+        updated_count = response['Attributes']['count']
         return {
-            "statusCode": 200,
-            "headers": {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "*",
-                "Access-Control-Allow-Headers": "*",
-                "Content-Type": "application/json"
-            },
-            "body": json.dumps({
-                "count": str(new_count)
-            })
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json'},
+            'body': json.dumps({'count': updated_count})
         }
-    
     except Exception as e:
-        logger.error(f"Error: {str(e)}")
+        # If item doesn't exist, create it
+        if 'ConditionalCheckFailedException' in str(e):
+            table.put_item(
+                Item={
+                    'id': 'visitors',  # Match the Key used in update_item
+                    'visitors': 1
+                }
+            )
+            return {
+                'statusCode': 200,
+                'headers': {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers': 'Content-Type',
+                    'Access-Control-Allow-Methods': 'POST'
+                },
+                'body': json.dumps({'count': 1})
+            }
+        
+        # Handle other exceptions
         return {
-            "statusCode": 500,
-            "headers": {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "*",
-                "Access-Control-Allow-Headers": "*",
-                "Content-Type": "application/json"
-            },
-            "body": json.dumps({
-                "error": "Internal Server Error",
-                "details": str(e)
-            })
+            'statusCode': 500,
+            'body': json.dumps({'error': str(e)})
         }
