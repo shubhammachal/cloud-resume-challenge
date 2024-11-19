@@ -1,0 +1,22 @@
+name: main
+on: 
+  push:
+
+env:
+  PYTHON_VERSION: 3.0.0
+
+jobs:
+  sample-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      
+      - name: Print hello
+        run: echo "hello"
