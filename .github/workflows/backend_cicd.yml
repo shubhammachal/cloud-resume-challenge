@@ -1,4 +1,4 @@
-name: main
+name: backend tests
 on: push
 env:
   PYTHON_VERSION: 3.9
@@ -20,10 +20,10 @@ jobs:
       
       - name: Test API Gateway
         run: |
-          cd cloud-resume/tests
+          cd tests
           python -m pytest test_api_gateway.py
       
       - name: Test Unit Handler
         run: |
-          cd cloud-resume/tests
+          cd tests
           python -m pytest unit_handler.py
