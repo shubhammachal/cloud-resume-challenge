@@ -1,29 +1,54 @@
-name: backend tests
-on: push
+name: SAM Build and Deploy
+
+on:
+  push:
+    branches: [ main ]
+
 env:
   PYTHON_VERSION: 3.9
+  SAM_VERSION: 1.85.0
 
 jobs:
-  test-api:
+  test-infra:
     runs-on: ubuntu-latest
-    timeout-minutes: 2
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-      
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install pytest
+      - name: Run tests
+        run: pytest tests/
+
+  build-and-deploy-infra:
+    needs: test-infra
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
       
-      - name: Test API Gateway
-        run: |
-          cd tests
-          python -m pytest test_api_gateway.py
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
       
-      - name: Test Unit Handler
-        run: |
-          cd tests
-          python -m pytest unit_handler.py
+      - name: Install SAM CLI
+        run: pip install aws-sam-cli==${{ env.SAM_VERSION }}
+      
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      
+      - name: SAM Build
+        run: sam build
+        working-directory: cloud-resume
+      
+      - name: SAM Deploy
+        run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
+        working-directory: cloud-resume
