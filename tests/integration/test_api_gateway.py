@@ -8,7 +8,7 @@ import requests
 Make sure env variable AWS_SAM_STACK_NAME exists with the name of the stack we are going to test. 
 """
 
-
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 class TestApiGateway:
 
     @pytest.fixture()
