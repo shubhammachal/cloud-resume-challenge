@@ -23,7 +23,6 @@ jobs:
           pip install pytest
           pip install boto3
           pip install requests
-          pip install os
       - name: Run tests
         run: pytest tests/
 
