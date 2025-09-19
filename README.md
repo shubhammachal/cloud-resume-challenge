@@ -38,6 +38,6 @@ To deploy this project, ensure you have the following installed:
 3. [Python 3](https://www.python.org/downloads/)
 4. [Docker](https://www.docker.com/products/docker-desktop)
 
-## Resume
+## Website
 https://www.shubham-machal.info
 
