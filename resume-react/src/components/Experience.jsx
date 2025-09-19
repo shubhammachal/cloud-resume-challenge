@@ -3,25 +3,26 @@ import React from 'react';
 const Experience = () => {
   const experiences = [
     {
-      title: "Data Science Intern",
+      title: "Software Engineer Intern",
       company: "Crossvalidation.AI",
       period: "June 2024 - September 2024",
       responsibilities: [
-        "Developed an AI financial agent to enhance investment strategies by automating data collection and processing.",
-        "Built data pipelines to extract, transform, and load data from various sources using SQL.",
-        "Fine-tuned LLaMA3 and OpenAI models using live news feeds, ensuring accuracy in predicting market changes through model testing."
+      "Developed and deployed AI-driven enterprise applications for financial data analysis on cloud infrastructure,integrating monitoring and validation workflows.",
+      "Fine-tuned LLaMA3 and OpenAI models with LoRA/QLoRA techniques, applying data preprocessing, normalization, and cleansing for time-series predictions."
       ]
     },
     {
-      title: "Cloud Engineer",
+      title: "Software Engineer",
       company: "Capgemini Technologies",
       period: "July 2019 - March 2023",
       responsibilities: [
-        "Built customer trust by enhancing cloud security and optimizing AWS/Azure infrastructure.",
-        "Reduced security incidents by 50% for Asahi Beverages on cloud platforms, enhancing client satisfaction.",
-        "Delivered tailored security solutions to clients, ensuring seamless protection of sensitive data and significantly enhancing the customer experience with robust security practices.",
-        "Improved efficiency in deployments by automating Azure infrastructure setup using Terraform, reducing errors by 40% and boosting network performance by 25%, ensuring faster and more reliable service delivery to clients.",
-        "Optimized network infrastructure by designing and refining virtual networks, subnets, IP addresses, and interfaces, enabling clients to achieve superior private and public network route performance for smoother business operations."
+        "Designed and deployed enterprise-scale cloud applications on AWS and Azure, integrating APIs, authentication services, and secure workflows.",
+        "Built and optimized CI/CD pipelines with GitHub Actions and Terraform, enabling automated testing, deployments, and customer delivery with 40% faster release cycles.",
+        "Developed full-stack features using Python, Java, and REST APIs, while collaborating with front-end teams for React-based interfaces.",
+        "Led technical troubleshooting sessions with customers and internal teams, analyzing logs, identifying gaps, and mitigating system risks.",
+        "Mentored junior engineers on coding standards, automation practices, and debugging techniques, improving team productivity.",
+        "Enhanced system reliability through SELinux, kernel modules, and monitoring (Prometheus, Grafana), reducing production incidents by 80%."
+      
       ]
     },
     {
@@ -29,11 +30,8 @@ const Experience = () => {
       company: "NIT Hamirpur",
       period: "May 2017 - July 2017",
       responsibilities: [
-        "Built customer trust by enhancing cloud security and optimizing AWS/Azure infrastructure.",
-        "Reduced security incidents by 50% for Asahi Beverages on cloud platforms, enhancing client satisfaction.",
-        "Delivered tailored security solutions to clients, ensuring seamless protection of sensitive data and significantly enhancing the customer experience with robust security practices.",
-        "Improved efficiency in deployments by automating Azure infrastructure setup using Terraform, reducing errors by 40% and boosting network performance by 25%, ensuring faster and more reliable service delivery to clients.",
-        "Optimized network infrastructure by designing and refining virtual networks, subnets, IP addresses, and interfaces, enabling clients to achieve superior private and public network route performance for smoother business operations."
+       "Built a full-stack elective allotment system (LAMP stack + JavaScript) for 1,000+ concurrent student users, showcasing scalable system design and SQL query optimization",
+       "Documented workflows, error-handling strategies, and conducted demonstrations to faculty and peers, strengthening technical communication skills."
       ]
     }
   ];

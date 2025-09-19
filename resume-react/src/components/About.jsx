@@ -9,14 +9,11 @@ const About = () => {
           <span className="text-primary"> Machal</span>
         </h1>
         <div className="subheading mb-5">
-          2147 Newhall Street · Santa Clara, CA 95050 · (510) 379-6190 ·
+          Santa Clara Bay Area CA 95050 · (510) 379-6190 ·
           <a href="mailto:shubham95m@gmail.com"> shubham95m@gmail.com</a>
         </div>
         <p className="about-description">
-          MS Computer Science student at Santa Clara University with experience in Machine Learning, 
-          Software Development, DevOps and Cloud Security. Skilled in Python, SQL, C++, DevOps. 
-          I'm seeking 2025 full-time or internship opportunities to apply my expertise in DevOps, 
-          Software Development and AI.
+        I am a software developer and recent Master of Science in Computer Science graduate from Santa Clara University. I bring four years of professional software engineering experience, with a focus on building scalable, reliable, and secure applications. My work spans backend systems, cloud infrastructure, and modern development practices. I specialize in leveraging technologies such as AWS, Kubernetes, Docker, and Python to design and deploy efficient solutions. My academic and professional background combines strong fundamentals in computer science with hands-on expertise in distributed systems, cloud platforms, and DevOps practices.
         </p>
 
         <div className="social-icons-container">

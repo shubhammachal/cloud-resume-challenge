@@ -6,7 +6,7 @@ const Education = () => {
       institution: "Santa Clara University",
       degree: "Master of Science",
       field: "Computer Science",
-      gpa: "3.42",
+      gpa: "3.50",
       period: "September 2023 - March 2025"
     },
     {
