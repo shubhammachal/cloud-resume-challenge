@@ -76,7 +76,7 @@ s3://machal-resume-website/
 │   ├── index-*.css        # Main CSS bundle
 │   └── *.woff2, *.ttf     # Font files
 ├── img/                   # Images
-│   └── profile.jpeg
+│   └── profile.jpg
 └── vendor/                # Third-party libraries
     ├── bootstrap/
     ├── font-awesome/

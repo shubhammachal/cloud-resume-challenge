@@ -15,7 +15,7 @@ const SideNav = () => {
         <span className="d-none d-lg-block">
           <img 
             className="img-fluid img-profile rounded-circle mx-auto mb-2" 
-            src="/img/profile.jpeg" 
+            src="/img/profile.jpg" 
             alt="Shubham Machal" 
           />
         </span>
